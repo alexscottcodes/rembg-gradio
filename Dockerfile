@@ -1,5 +1,5 @@
 # Use a lightweight Python base
-FROM python:3.11-slim
+FROM python:3.10-slim
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -7,11 +7,11 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     GRADIO_SERVER_NAME="0.0.0.0"
 
 # Install system dependencies
-# libgl1-mesa-glx: required for OpenCV (used by rembg)
-# libgomp1: required for ONNX Runtime
-# libheif-dev: helpful for HEIF support, though wheels usually suffice
+# libgl1: Replacement for libgl1-mesa-glx on newer Debian/Ubuntu systems
+# libglib2.0-0: Required by OpenCV
+# libgomp1: Required for ONNX Runtime
 RUN apt-get update && apt-get install -y \
-    libgl1-mesa-glx \
+    libgl1 \
     libglib2.0-0 \
     libgomp1 \
     && rm -rf /var/lib/apt/lists/*
@@ -24,9 +24,6 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Create a dedicated directory for model cache to ensure permissions work
-# rembg downloads U2Net to ~/.u2net by default. 
-# We can pre-download it or let it download on first run.
-# For Docker, it's good practice to set a cache dir we control.
 ENV U2NET_HOME=/app/.u2net
 
 # Copy application code

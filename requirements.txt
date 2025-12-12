@@ -1,1 +1,8 @@
 gradio
+rembg[cpu]
+pillow
+pillow-heif
+pillow-avif-plugin
+psutil
+numpy
+onnxruntime
